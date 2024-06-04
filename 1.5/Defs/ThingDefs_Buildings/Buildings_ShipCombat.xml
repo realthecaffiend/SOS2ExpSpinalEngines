@@ -40,6 +40,11 @@
 				<fuelUseAmp>0.25</fuelUseAmp>
 				<powerUseAmp>0.01</powerUseAmp>
 			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
 			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
@@ -96,6 +101,11 @@
 				<fuelUseAmp>0.05</fuelUseAmp>
 				<powerUseAmp>5.00</powerUseAmp> <!-- not a typo-->
 			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
 			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
@@ -148,6 +158,11 @@
 				<fuelUseAmp>0.01</fuelUseAmp>
 				<powerUseAmp>6.00</powerUseAmp> <!-- not a typo-->
 			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
 			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
@@ -197,6 +212,11 @@
 				<supportWeight>10</supportWeight>
 				<stackEnd>true</stackEnd>
 			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
 			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
@@ -247,6 +267,11 @@
 				<supportWeight>5</supportWeight>
 				<fuelAllowAmp>0.75</fuelAllowAmp>
 			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
 			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
@@ -297,6 +322,11 @@
 				<supportWeight>15</supportWeight>
 				<fuelStackEnd>true</fuelStackEnd>
 			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
 			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
