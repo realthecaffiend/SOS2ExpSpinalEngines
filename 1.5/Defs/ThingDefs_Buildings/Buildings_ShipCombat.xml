@@ -44,6 +44,13 @@
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
 				<thing>ShuttleFuelPods</thing>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -105,6 +112,13 @@
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
 				<thing>ShuttleFuelPods</thing>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -162,6 +176,13 @@
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
 				<thing>ShuttleFuelPods</thing>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -215,6 +236,13 @@
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
 				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
 			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
@@ -271,6 +299,13 @@
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
 				<thing>ShuttleFuelPods</thing>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -325,6 +360,13 @@
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
 				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
 			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
