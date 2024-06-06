@@ -381,4 +381,24 @@
 		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
 		<uiIconScale>0.9</uiIconScale>
 	</ThingDef>
+	<ThingDef ParentName="MoteBase">
+		<defName>SOS2SE_Mote_WarpEffect</defName>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<mote>
+			<fadeInTime>0.1</fadeInTime>
+			<solidTime>0.62</solidTime>
+			<fadeOutTime>0.5</fadeOutTime>
+		</mote>
+		<graphicData>
+			<graphicClass>Graphic_MoteWithAgeSecs</graphicClass>
+			<texPath>Things/Mote/PsychicConditionCauserMask</texPath>
+			<shaderType>MotePsychicConditionCauser</shaderType>
+			<shaderParameters>
+				<_distortionIntensity>0.015</_distortionIntensity>
+				<_brightnessMultiplier>1.1</_brightnessMultiplier>
+				<_distortionScale>40</_distortionScale>
+			</shaderParameters>
+			<drawSize>30</drawSize>
+		</graphicData>
+	</ThingDef>
 </Defs>

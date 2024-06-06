@@ -22,7 +22,7 @@
 			<Flammability>0</Flammability>
 		</statBases>
 		<tickerType>Normal</tickerType>
-		<description>A chemfuel-powered spinal engine. Not suitable for interplanetary travel.\n\nThrust: 2000+25% per amp\nFuel use: 4 chemfuel+25% per amp, per second</description>
+		<description>A chemfuel-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet.\n\nThrust: 2000+25% per amp\nFuel use: 4 chemfuel+25% per amp, per second</description>
 		<researchPrerequisites>
 			<li>ShipEngine</li>
 			<li>ShipEngineLarge</li>
@@ -110,7 +110,7 @@
 			<Flammability>0</Flammability>
 		</statBases>
 		<tickerType>Normal</tickerType>
-		<description>A nuclear-powered spinal engine. Not suitable for interplanetary travel.\n\nThrust: 2500+25% per amp\nFuel use: 3 fuel pods+25% per amp, per second</description>
+		<description>A nuclear-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet.\n\nThrust: 2500+25% per amp\nFuel use: 3 fuel pods+25% per amp, per second</description>
 		<researchPrerequisites>
 			<li>ShipEngine</li>
 			<li>ShipEngineLarger</li>
