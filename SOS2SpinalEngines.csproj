@@ -41,7 +41,6 @@
     </Reference>
     <Reference Include="ShipsHaveInsides">
       <HintPath>..\..\..\..\workshop\content\294100\1909914131\1.5\Assemblies\ShipsHaveInsides.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,9 +67,11 @@
     </Compile>
     <Compile Include="Source\CompProperties_SpinalEngineTrail.cs" />
     <Compile Include="Source\CompProperties_SpinalMount.cs" />
+    <Compile Include="Source\CompPropsMultiblock.cs" />
     <Compile Include="Source\CompSpinalEngineMount.cs" />
     <Compile Include="Source\CompSpinalEnginePowerTrader.cs" />
     <Compile Include="Source\CompSpinalEngineTrail.cs" />
+    <Compile Include="Source\CompMultiblock.cs" />
     <Compile Include="Source\PlaceWorker_NeedsSpinalEngineMount.cs" />
     <Compile Include="Source\spinal-harmony.cs" />
   </ItemGroup>

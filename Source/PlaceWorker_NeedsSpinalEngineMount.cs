@@ -16,7 +16,7 @@ namespace TheCafFiend
             {
                 Building building = allBuildingsColonist[i];
                 if (building == null) continue;
-                CompSpinalMount localSpinalComp = building.TryGetComp<CompSpinalMount>();
+                CompSpinalEngineMount localSpinalComp = building.TryGetComp<CompSpinalEngineMount>();
                 if (!Find.Selector.IsSelected(building) && localSpinalComp != null && localSpinalComp.Props.emits)
                 {
                     PlaceWorker_SpinalMountPort.DrawFuelingPortCell(building.Position, building.Rotation, building.def);

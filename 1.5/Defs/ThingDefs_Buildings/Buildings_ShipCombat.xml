@@ -35,10 +35,19 @@
 		<comps>
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>true</emits>
-				<receives>true</receives>
 				<thrustAmp>0.25</thrustAmp>
 				<fuelUseAmp>0.25</fuelUseAmp>
 				<powerUseAmp>0.01</powerUseAmp>
+				<multiblockType>engineAccelerator</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>engineAccelerator</li>
+							<li>engineTankEnd</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
@@ -103,10 +112,19 @@
 			</li>
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>true</emits>
-				<receives>true</receives>
 				<thrustAmp>0.25</thrustAmp>
 				<fuelUseAmp>0.05</fuelUseAmp>
 				<powerUseAmp>5.00</powerUseAmp> <!-- not a typo-->
+				<multiblockType>engineAccelerator</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>engineAccelerator</li>
+							<li>engineTankEnd</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
@@ -136,7 +154,7 @@
 		<defName>ShipEngineExoticAmplifier</defName>
 		<label>Exotic Engine Accelerator</label>
 		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
-		<description>Utilizes exotic fields to accelerate fuel before ignition. Attach one or more of these to a fuel support system, then add an exhaust to determine the engine type.\n\nIncreases base thrust by 25%, but also increases fuel consumption by 1%.\n\nThese accelerators require very minimal fuel support infrastructure at the end of the spinal engine to support them, while requiring truly incredible amounts of power to operate</description>
+		<description>Utilizes exotic fields to accelerate fuel before ignition. Attach one or more of these to a fuel support system, then add an exhaust to determine the engine type.\n\nIncreases base thrust by 25%, but also increases fuel consumption by 1%: This means a single middle section of fuel support could run 75 of these by itself.\n\nThese accelerators require very minimal fuel support infrastructure at the end of the spinal engine to support them, while requiring truly incredible amounts of power to operate</description>
 		<graphicData>
 			<texPath>Things/Building/Ship/SpinalEngine_Solenoid_Archo</texPath>
 			<graphicClass>Graphic_Multi</graphicClass>
@@ -167,10 +185,19 @@
 		<comps>
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>true</emits>
-				<receives>true</receives>
 				<thrustAmp>0.25</thrustAmp>
 				<fuelUseAmp>0.01</fuelUseAmp>
 				<powerUseAmp>6.00</powerUseAmp> <!-- not a typo-->
+				<multiblockType>engineAccelerator</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>engineAccelerator</li>
+							<li>engineTankEnd</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
@@ -231,7 +258,15 @@
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>true</emits>
 				<supportWeight>10</supportWeight>
-				<stackEnd>true</stackEnd>
+				<multiblockType>engineTankEnd</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>engineTankMid</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
@@ -262,7 +297,7 @@
 		<defName>ShipSpinalTankMid</defName>
 		<label>Spinal Engine Fuel Support Middle</label>
 		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
-		<description>Each of these segments of fuel infrastructure will support 3 engine accelerators (or, fifteen high-powered accelerators).\n\nConnect these from the fuel support start structure, to the fuel support end, which will then connect to engine accelerators</description>
+		<description>Each of these segments of fuel infrastructure will support 3 engine accelerators (or, fifteen high-powered accelerators), due to increasing the possible fuel burn rate by 75%.\n\nConnect these from the fuel support start structure, to the fuel support end, which will then connect to engine accelerators\n\nFuel support is very heavy and minimizing these is important to maximize your thrust:weight ratio. Each one is similar to adding 100 hull plating to your ship</description>
 		<graphicData>
 			<texPath>Things/Building/Ship/SpinalEngine_FuelTankMiddle</texPath>
 			<graphicClass>Graphic_Multi</graphicClass>
@@ -294,6 +329,16 @@
 				<emits>true</emits>
 				<supportWeight>5</supportWeight>
 				<fuelAllowAmp>0.75</fuelAllowAmp>
+				<multiblockType>engineTankMid</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>engineTankMid</li>
+							<li>engineTankStart</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>
@@ -355,7 +400,15 @@
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>true</emits>
 				<supportWeight>15</supportWeight>
-				<fuelStackEnd>true</fuelStackEnd>
+				<multiblockType>engineTankStart</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>invalidNonExistantTypeOnPurpose</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
 				<pipeNet>SoS2_UraniumPodNet</pipeNet>

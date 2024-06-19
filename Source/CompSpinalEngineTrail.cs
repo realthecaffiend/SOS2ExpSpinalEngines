@@ -1,12 +1,14 @@
 ﻿using RimWorld;
 using SaveOurShip2;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Verse;
-
+// Future thoughts: Overdrive mode(s), entangled accelerators, ramjets, antimatter? end, better accelerators (Entangled? Bump exotics?), liftoff (fuel, gimbals?)
 namespace TheCafFiend
 {
     [StaticConstructorOnStartup]
-    public class CompSpinalEngineTrail : CompEngineTrail
+    public class CompSpinalEngineTrail : CompEngineTrail //TODO: Exhaust destroy area is funneh. Harmony post-fix it?
     {
         public override string CompInspectStringExtra()
         {
@@ -16,6 +18,7 @@ namespace TheCafFiend
             {
                 stringBuilder.Append("SoS.SpinalEngines.FuelRate".Translate(cachedFuelUse, cachedFuelAllowed)); // "Fuel burn rate per second: {cachedFuelUse} of {cachedFuelAllowed} supported"
                 stringBuilder.AppendInNewLine("SoS.SpinalEngines.Thrust".Translate(cachedThrust * 500)); // "Thrust: {cachedThrust * 500}"
+                stringBuilder.AppendWithSeparator("SoS.SpinalEngines.SupportMass".Translate(cachedMass)," ");
             }
             else
             {
@@ -23,19 +26,17 @@ namespace TheCafFiend
             }
             return stringBuilder.ToString();
         }
-        public virtual CompProperties_SpinalEngineTrail Properties //Wait is this dirty I just want to be clear it's not hiding hrm
+        public virtual CompProperties_SpinalEngineTrail Properties
         {
             get { return props as CompProperties_SpinalEngineTrail; }
         }
-        public class ReturnValue
+        public class SpinalEngineState : MultiblockState
         {
             public float thrustAmp;
             public float fuelAmp;
             public float fuelAllowAmp;
             public float powerUseAmp;
             public int supportWeight;
-            public string playerError;
-            public bool fullyFormed;
         }
         private int cachedThrust = 0;
         private int cachedMass = 0; // add/remove on the *engine* does this itself, this is only amps+caps
@@ -44,6 +45,7 @@ namespace TheCafFiend
         private int cachedPowerUse = 0;
         private int cachedFuelAllowed = 0; // Error below probably never surfaces to a player but I want a fallback
         private string cachedError = "SoS.SpinalEngines.DefaultError".Translate();
+        public HashSet<Building> cachedBuildings = new HashSet<Building>(); //getter setter nonsense instead? 
         public override int Thrust
         {
             get
@@ -53,24 +55,24 @@ namespace TheCafFiend
                     Log.Message("SOS2 spinal engines: somehow hit thrust from a non-compspinalenginetrail?");
                     return base.Thrust;
                 }
-                if (fullyFormed)
+                if (!fullyFormed)
                 {
                     //Log.Message($"sos2 spinal engines thrust called about a spinal engine, returning cached thrust {thrustCached}");
-                    return cachedThrust;
-                }
-                else
-                {
-                    //Log.Message($"sos2 spinal engines thrust called about a spinal engine, not fully formed");
-                    calc();
-                    return cachedThrust;
-                }
+                    Calc();
+                }  
+                return cachedThrust;
             }
         }
-        public string CurrentError // Feels a little silly to have a setter just for this, maybe cachedError should just be public? 
+        public bool SetError(string passedError) // trivial atm but stubbed for any later handling: Consolidate translation?
         {
-            set
+            if (string.IsNullOrEmpty(passedError))
+            { 
+                return false; 
+            }
+            else
             {
-                cachedError = value;
+                cachedError = passedError;
+                return true;
             }
         }
         public int PowerUse
@@ -101,17 +103,12 @@ namespace TheCafFiend
                     Log.Message("SOS2 spinal engines: somehow hit FuelUse from a non-compspinalenginetrail?");
                     return base.FuelUse;
                 }
-                if (fullyFormed)
+                if (!fullyFormed)
                 {
                     //Log.Message($"sos2 spinal engines thrust called about a spinal engine, returning cached fuelUse {cachedFuelUse}");
-                    return cachedFuelUse;
+                    Calc();
                 }
-                else
-                {
-                    //Log.Message($"sos2 spinal engines fuel called about a spinal engine, not fully formed");
-                    calc();
-                    return cachedFuelUse;
-                }
+                return cachedFuelUse;
             }
         }
         public int SupportWeight
@@ -123,15 +120,11 @@ namespace TheCafFiend
                     Log.Message("SOS2 spinal engines: somehow hit supportWeight from a non-compspinalenginetrail?!!!!??");
                     return 0;// is this a log.error? Something went squirelly 
                 }
-                if (fullyFormed)
+                if (!fullyFormed)
                 {
-                    return cachedMass;
+                    Calc();
                 }
-                else
-                {
-                    calc();
-                    return cachedMass;
-                }
+                return cachedMass;
             }
         }
 
@@ -145,9 +138,10 @@ namespace TheCafFiend
             cachedPowerUse = 0;
             cachedError = "SoS.SpinalEngines.DefaultError".Translate();
         }
-        private void calc()
+        public void Calc()
         {
-            ReturnValue wasReturned = SpinalRecalc(this);
+            SpinalEngineState wasReturned = SpinalEngineRecalc(this);
+            SpinalEngineRecalc(this);
             if (wasReturned == null) // null basically means something went wrong: Multiblock broken, re-set to zeros
             {
                 Reset();
@@ -159,12 +153,12 @@ namespace TheCafFiend
             }
             else
             {
-                Reset(); //I can't see this being needed but eh 
+                Reset(); //I can't see this being needed but eh (it already saved me from one error!)
                 cachedThrust = (int)(base.Props.thrust * (1 + wasReturned.thrustAmp)); 
                 cachedFuelUse = (int)(base.Props.fuelUse * (1 + wasReturned.fuelAmp));
-                CompSpinalEnginePowerTrader powerComp = parent.TryGetComp<CompSpinalEnginePowerTrader>(); // removing this makes the game NRE?
-                cachedPowerUse = (int)(powerComp.Props.PowerConsumption * (1 + wasReturned.powerUseAmp));// Ok I guess I keep powerComp?!
-                //Log.Message($"sos2spinal engines base.powercomp.poweroutput from calc returned poweruse is {wasReturned.powerUseAmp} cached is {cachedPowerUse}");
+                CompSpinalEnginePowerTrader powerComp = parent.TryGetComp<CompSpinalEnginePowerTrader>(); 
+                cachedPowerUse = (int)(powerComp.Props.PowerConsumption * (1 + wasReturned.powerUseAmp));
+                //Log.Message($"sos2spinal engines base.powercomp.poweroutput from Calc returned poweruse is {wasReturned.powerUseAmp} cached is {cachedPowerUse}");
                 powerComp.PowerOutput = 0 - cachedPowerUse; 
                 //Log.Message($"sos2spinal engines modified comppowertrader PowerOutput on {parent.GetUniqueLoadID()} to {powerComp.PowerOutput}");
                 cachedFuelAllowed = (int)(this.Properties.fuelAllowed * (1 + wasReturned.fuelAllowAmp));
@@ -172,7 +166,112 @@ namespace TheCafFiend
                 fullyFormed = true;
             }
         }
-        public static ReturnValue SpinalRecalc(CompSpinalEngineTrail instance)
+        //cannot be added till SOS2 updates to flag virtual
+        public override bool CanFire(Rot4 rot) // fixes a visual glitch where engines in some cases can visually "fire" 
+        {
+            if (fullyFormed == false)
+            {
+                return false;
+            }
+            return base.CanFire(rot);
+        }
+        // SpinalRecalc, but using multiblock code and less gnarly
+        public static SpinalEngineState SpinalEngineRecalc(CompSpinalEngineTrail argEngineTrail)
+        {
+            RecursiveReturn returnHandler = new RecursiveReturn();
+            SpinalEngineState returnedSpinalEngineState = new SpinalEngineState
+            {
+                fullyFormed = false
+            };
+            if (argEngineTrail == null)
+            {
+                Log.Message("SOS2 spinal engines: argEngineTrail in SpinalEngineRecalc null");
+                return null;
+            }
+            Thing buildingPointer = argEngineTrail.parent;
+            if (buildingPointer == null)
+            {
+                Log.Message("SOS2 spinal engines: buildingPointer in SpinalEngineRecalc null");
+                return null;
+            }
+            CompSpinalEngineMount spinalComp = buildingPointer.TryGetComp<CompSpinalEngineMount>();
+            if (spinalComp == null)
+            {
+                Log.Message("SOS2 spinal engines: spinalcomp in SpinalEngineRecalc null");
+                return null;
+            }
+            //Log.Message($"MultiblockStep (forward) from {buildingPointer.def.defName} is: {CompMultiblock.MultiblockStep(buildingPointer,buildingPointer.Rotation.AsInt)}");
+            List<Building> blockList = new List<Building>();
+            foreach (MultiblockConnections connectObject in spinalComp.Props.acceptFrom)
+            {
+                returnHandler = CompMultiblock.RecursiveFind(ref blockList, buildingPointer, connectObject, true);
+                if (returnHandler == null || returnHandler.recursiveErrorFound)
+                {
+                    break;
+                }
+            }
+            if (returnHandler == null)
+            {
+                Log.Message($"SOS2SE: RecursiveFind returned a null");
+                return null;
+            }
+            if (returnHandler.recursiveErrorFound)
+            {
+                if (returnHandler.incorrectBlockRotation)
+                {
+                    returnedSpinalEngineState.playerError = "SoS.SpinalEngines.BackwardsSpinal".Translate(returnHandler.errorBlockLabel, returnHandler.errrorBlockPosition);
+                    return returnedSpinalEngineState;
+                }
+                if (returnHandler.incorrectAlignment)
+                {
+                    returnedSpinalEngineState.playerError = "SoS.SpinalEngines.MissaligedMultiblock".Translate(returnHandler.errorBlockLabel, returnHandler.errrorBlockPosition);
+                    return returnedSpinalEngineState;
+                }
+            }
+            List<string> foundTypes = new List<string>();
+            argEngineTrail.cachedBuildings.Clear(); // entirely re-build on calc? Is this the best? 
+            foreach (Building iterateBuilding in blockList) //consolidate all the information
+            {
+                CompSpinalEngineMount iterateSpinalComp = iterateBuilding.TryGetComp<CompSpinalEngineMount>();
+                if (iterateSpinalComp == null)
+                {
+                    Log.Error($"SOS2SE: No spinal comp found at {iterateBuilding.Position}!"); //this errors/breaks because something went Real Wrong (TM)
+                    break;
+                }
+                foundTypes.Add(iterateSpinalComp.Props.multiblockType);
+                returnedSpinalEngineState.thrustAmp += iterateSpinalComp.Props.thrustAmp;
+                returnedSpinalEngineState.fuelAmp += iterateSpinalComp.Props.fuelUseAmp;
+                returnedSpinalEngineState.powerUseAmp += iterateSpinalComp.Props.powerUseAmp;
+                returnedSpinalEngineState.supportWeight += iterateSpinalComp.Props.supportWeight; 
+                returnedSpinalEngineState.fuelAllowAmp += iterateSpinalComp.Props.fuelAllowAmp;
+                argEngineTrail.cachedBuildings.Add(iterateBuilding);
+            }
+            if (returnedSpinalEngineState.thrustAmp == 0) //no point in iterating strings here
+            {
+                returnedSpinalEngineState.playerError = "SoS.SpinalEngines.NoAccelerator".Translate();
+                return returnedSpinalEngineState;
+            }
+            if ((foundTypes.Count(stringEvaluate => stringEvaluate == "engineTankEnd")) < 1)
+            {
+                returnedSpinalEngineState.playerError = "SoS.SpinalEngines.NoFuelSupport".Translate();
+                return returnedSpinalEngineState;
+            }
+            if ((foundTypes.Count(stringEvaluate => stringEvaluate == "engineTankStart")) < 1) // Is there any way to get two wedged in?
+            {
+                returnedSpinalEngineState.playerError = "SoS.SpinalEngines.NoFuelSupportEnd".Translate();
+                return returnedSpinalEngineState;
+            }
+            if ((int)(returnedSpinalEngineState.fuelAllowAmp * argEngineTrail.Properties.fuelAllowed) < (int)(returnedSpinalEngineState.fuelAmp * argEngineTrail.Properties.fuelUse))
+            {
+                returnedSpinalEngineState.playerError = "SoS.SpinalEngines.InSufficientFuelSupport".Translate((int)(returnedSpinalEngineState.fuelAmp * argEngineTrail.Properties.fuelUse), (int)(returnedSpinalEngineState.fuelAllowAmp * argEngineTrail.Properties.fuelAllowed));
+                return returnedSpinalEngineState;
+            }
+            // Found an entire multiblock
+            returnedSpinalEngineState.fullyFormed = true;
+            return returnedSpinalEngineState;
+        }
+        // The below historical site is left in case I need something/want to stare into the abyss  
+        /* public static MultiblockState SpinalRecalc(CompSpinalEngineTrail instance)
         {
             bool foundNonAmp = false;
             bool foundFuelStart = false;
@@ -196,7 +295,7 @@ namespace TheCafFiend
                 Log.Message("SOS2 spinal engines: spinalcomp in SpinalRecalc null");
                 return null;
             }
-            ReturnValue toReturn = new ReturnValue
+            MultiblockState toReturn = new MultiblockState
             {
                 fullyFormed = false
             };
@@ -311,7 +410,7 @@ namespace TheCafFiend
             // After all of the previous this has? to be a real spinal, right?
             toReturn.fullyFormed = true;
             return toReturn;
-        }
+        }*/
 
         public static Building EngineFromSpinal(Building SpinalObject) // derived from spinalrecalc but too different to combine
         {
@@ -332,16 +431,17 @@ namespace TheCafFiend
             }
             //Log.Message($"found rotation on a spinal component, iterating, vecMoveCheck is: {vecMoveCheck}");
             previousThingPos = buildingPointer.Position;
+            //Log.Message($"SOS2 Spinal Engines: previousThingPos is {previousThingPos} and BuildingPointer.Position is {buildingPointer.Position}");
             do
             {
-                if (buildingPointer.TryGetComp<CompSpinalMount>().Props.stackEnd)
+                /*if (buildingPointer.TryGetComp<CompSpinalEngineMount>().Props.stackEnd)
                 {
                     previousThingPos -= vecMoveCheck; // Jump one more if it's a tankend, to reach the amp
-                }
+                } */
                 previousThingPos -= vecMoveCheck;
                 //Log.Message($"SOS2 Spinal Engines: Climbing spinal to find engine, looking at: {previousThingPos}");
                 //Log.Message($"SOS2 Spinal Engines: previousThingPos is {previousThingPos} and BuildingPointer.Position is {buildingPointer.Position}");
-                buildingPointer = previousThingPos.GetFirstThingWithComp<CompSpinalMount>(buildingPointer.Map);
+                buildingPointer = previousThingPos.GetFirstThingWithComp<CompSpinalEngineMount>(buildingPointer.Map);
                 if (buildingPointer == null) //usually just first disconnected builds
                 {
                     return null;
@@ -362,13 +462,13 @@ namespace TheCafFiend
                 //found engine (Note the double -vecMoveCheck!)
                 else if (previousThingPos - vecMoveCheck - vecMoveCheck == buildingPointer.Position && (buildingPointer.TryGetComp<CompSpinalEngineTrail>() != null))
                 {
-                    //Log.Message("SOS2 spinal engines: EngineFromSpinal found an engine and is about to return it");
+                    Log.Message("SOS2 spinal engines: EngineFromSpinal found an engine and is about to return it");
                     return (Building)buildingPointer;
                 }
                 //found unaligned
                 else
                 {
-                    //Log.Message($"SOS2 spinal engines: Found unaligned in EngineFromSpinal amp.position: {buildingPointer.Position}, previouspos minus vec: {previousThingPos - vecMoveCheck}");
+                    Log.Message($"SOS2 spinal engines: Found unaligned in EngineFromSpinal amp.position: {buildingPointer.Position}, previouspos minus vec: {previousThingPos - vecMoveCheck}");
                     foundNonAmp = true;
                 }
 

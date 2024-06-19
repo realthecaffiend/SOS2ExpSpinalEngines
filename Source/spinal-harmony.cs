@@ -30,7 +30,7 @@ namespace TheCafFiend
         public static bool Prefix(Building b, ref int ___EngineMass, ref float ___ThrustRaw, HashSet<Building> ___Buildings, ref List<CompEngineTrail> ___Engines) //prefix due to DoSpawn running addcache on every single cell :/
         {
             Building argBuilding = b; 
-            // Log.Message($"SOS2 Spinal Engines: name of added is: {argBuilding.def.defName}");
+            Log.Message($"SOS2 Spinal Engines: name of added is: {argBuilding.def.defName}");
             if (___Buildings.Contains(argBuilding))
             {
                 return true; //building is already in cache, presumably re-running on other cells
@@ -40,11 +40,11 @@ namespace TheCafFiend
                 //Log.Message("SOS2ExpSpinalEngines SpinalComp null");
                 return true; //Not spinal-related, bail ASAP
             }
-            Building foundEngine = TheCafFiend.CompSpinalEngineTrail.EngineFromSpinal(argBuilding);
+            Building foundEngine = CompMultiblock.ControllerFromSubBlock(argBuilding, true);
             if (foundEngine == null)
             {
-                //Log.Message("SOS2 SpinalEngines EngineFromSpinal null");
-                return true; //amp/cap but no engine
+                Log.Message("SOS2 SpinalEngines EngineFromSpinal null");
+                return true; 
             }
             CompSpinalEngineTrail foundEngineComp = foundEngine.TryGetComp<CompSpinalEngineTrail>();
             if (foundEngineComp == null)
@@ -57,24 +57,25 @@ namespace TheCafFiend
                 ___EngineMass += foundEngineComp.SupportWeight; //regular add will soon pull thrust: Just completed spinal, so add mass
                 return true;
             }
-            if (!foundEngineComp.fullyFormed)
+            if (!foundEngineComp.cachedBuildings.Contains(argBuilding))
             {
-                //only reached with a spinal component that isn't an engine but found an engine in EngineFromSpinal (aka amp/capacitor)
-                if (___Engines.Contains(foundEngineComp) && ___Buildings.Contains(foundEngine)) // Building is support, engine already added
+                foundEngineComp.Calc(); //new, uncached support building which points into controller added: re-validate 
+            }
+            //only reached with a spinal component that isn't an engine but found an engine in EngineFromSpinal (aka amp/capacitor)
+            if (___Engines.Contains(foundEngineComp) && ___Buildings.Contains(foundEngine)) // Building is support, engine already added
+            {
+                ___EngineMass += foundEngineComp.SupportWeight; //calling triggers the spinal recalc and if successfull, sets fullyFormed
+                ___ThrustRaw += foundEngineComp.Thrust; //Direct manipulation of the cache: Best I can think of but is there better?
+                return true;
+            }
+            if (foundEngineComp.Thrust != 0) // If every check above bails this will actually *cause* the recalc
+            {
+                if (!___Engines.Contains(foundEngineComp) && ___Buildings.Contains(foundEngine)) // is engine purged from list BUT still in shipcache? Broken spinal support
                 {
-                    ___EngineMass += foundEngineComp.SupportWeight; //calling triggers the spinal recalc and if successfull, sets fullyFormed
-                    ___ThrustRaw += foundEngineComp.Thrust; //Direct manipulation of the cache: Best I can think of but is there better?
-                    return true;
-                }
-                if (foundEngineComp.Thrust != 0) // If every check above bails this will actually *cause* the recalc
-                {
-                    if (!___Engines.Contains(foundEngineComp) && ___Buildings.Contains(foundEngine)) // is engine purged from list BUT still in shipcache? Broken spinal support
-                    {
-                        //Log.Message($"SOS2spinal engines: re-adding engine to internal engine list after spinal supports were removed earlier");
-                        ___Engines.Add(foundEngineComp);
-                        ___EngineMass += foundEngineComp.SupportWeight;
-                        ___ThrustRaw += foundEngineComp.Thrust;
-                    }
+                    //Log.Message($"SOS2spinal engines: re-adding engine to internal engine list after spinal supports were removed earlier");
+                    ___Engines.Add(foundEngineComp);
+                    ___EngineMass += foundEngineComp.SupportWeight;
+                    ___ThrustRaw += foundEngineComp.Thrust;
                 }
             }
             return true;
@@ -93,7 +94,7 @@ namespace TheCafFiend
                 //Log.Message("SOS2ExpSpinalEngines SpinalComp null");
                 return; //Not spinal-related, bail ASAP
             }
-            Building foundEngine = CompSpinalEngineTrail.EngineFromSpinal(argBuilding);
+            Building foundEngine = CompMultiblock.ControllerFromSubBlock(argBuilding);
             if (foundEngine == null)
             {
                 //Log.Message("SOS2ExpSpinalEngines EngineFromSpinal null");
@@ -112,6 +113,7 @@ namespace TheCafFiend
                     ___EngineMass -= foundEngineComp.SupportWeight; //regular remove would have already pulled thrust: Just broke spinal, so remove mass
                     return;
                 }
+                foundEngineComp.cachedBuildings.Remove(argBuilding);
                 // Log.Message($"SOS2 Spinal Engines: fully formed spinal with a component busted, remove thrust {foundEngineComp.Thrust}");
                 //only reached removing a spinal component that isn't an engine but found an engine in EngineFromSpinal (aka amp/capacitor)
                 ___EngineMass -= foundEngineComp.SupportWeight;
@@ -119,8 +121,9 @@ namespace TheCafFiend
                 foundEngineComp.Off();
                 ___Engines.Remove(foundEngineComp); // Otherwise broken spinals in combat let engine still (visually) fire to no effect (also used to track for re-added parts)
                 foundEngineComp.Reset(); //something was removed, start from scratch!
-                foundEngineComp.CurrentError = "SoS.SpinalEngines.ComponentRemoved".Translate(argBuilding.def.label); //Only use of this setter hrm
+                foundEngineComp.SetError("SoS.SpinalEngines.ComponentRemoved".Translate(argBuilding.def.label));
                 foundEngineComp.fullyFormed = false;
+                foundEngineComp.Calc(); //could re-set fullyFormed depending on removed block!
             }
         }
     }

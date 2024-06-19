@@ -1,10 +1,9 @@
-﻿using SaveOurShip2;
-using Verse;
+﻿using Verse;
 
 namespace TheCafFiend
 {
     [StaticConstructorOnStartup]
-    public class CompSpinalEngineMount : CompSpinalMount
+    public class CompSpinalEngineMount : CompMultiblock
     {
         public new CompProperties_SpinalEngineMount Props => (CompProperties_SpinalEngineMount)props;
     }

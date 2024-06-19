@@ -36,8 +36,22 @@
 			</li>
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>false</emits>
-				<receives>true</receives>
-				<color>(1.0,0.8,0)</color>
+				<multiblockType>engineExhaust</multiblockType>
+				<multiblockController>true</multiblockController>
+				<acceptFrom>
+					<li>
+						<direction>None</direction> <!--Engines in SOS2 exhaust to the "back"! So connect to the other end-->
+						<connectType>
+							<li>engineAccelerator</li>
+						</connectType>
+					</li>
+					<li>
+						<direction>Clockwise</direction>
+						<connectType>
+							<li>engineAccelerator</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="CompProperties_Power">
 				<compClass>TheCafFiend.CompSpinalEnginePowerTrader</compClass>
@@ -72,10 +86,6 @@
 				<fuelAllowed>4</fuelAllowed>
 				<soundWorking>ShipEngineFuel</soundWorking>
 			</li>
-			<li>
-				<compClass>CompColorable</compClass>
-			</li>
-			<!-- not used but avoids a minor error from SOS2 -->
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -124,8 +134,16 @@
 			</li>
 			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
 				<emits>false</emits>
-				<receives>true</receives>
-				<color>(1.0,0.8,0)</color>
+				<multiblockType>engineExhaust</multiblockType>
+				<multiblockController>true</multiblockController>
+				<acceptFrom>
+					<li>
+						<direction>None</direction> <!--Engines in SOS2 exhaust to the "back"! So connect to the other end-->
+						<connectType>
+							<li>engineAccelerator</li>
+						</connectType>
+					</li>
+				</acceptFrom>
 			</li>
 			<li Class="CompProperties_Power">
 				<compClass>TheCafFiend.CompSpinalEnginePowerTrader</compClass>
@@ -160,9 +178,6 @@
 				<fuelAllowed>3</fuelAllowed>
 				<soundWorking>ShipEngineFuel</soundWorking>
 			</li>
-			<li>
-				<compClass>CompColorable</compClass>
-			</li> <!-- not used but avoids a minor error from SOS2 -->
 		</comps>
 		<placeWorkers>
 			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
