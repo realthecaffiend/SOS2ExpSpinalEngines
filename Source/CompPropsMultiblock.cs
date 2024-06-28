@@ -8,10 +8,6 @@ namespace TheCafFiend
         public bool emits = false;
         public string multiblockType = null; // mod-defined useage, with the below
         public List<MultiblockConnections> acceptFrom = new List<MultiblockConnections>();
-        /*public List<string> connectToFront = null; //list (<li>) of types (above!) to connect to in front
-        public List<string> connectToClockwise = null; //list (<li>) of types (above!) to connect to in front
-        public List<string> connectToOpposite = null; //list (<li>) of types (above!) to connect to in front
-        public List<string> connectToCounterclockwise = null; //list (<li>) of types (above!) to connect to in front */
         public bool multiblockController = false; // Only flagged on the one, singular, "smart" block in the structure
         public CompPropsMultiblock()
         {

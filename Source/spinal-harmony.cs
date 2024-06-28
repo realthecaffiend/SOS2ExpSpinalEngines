@@ -1,6 +1,10 @@
 ﻿using HarmonyLib;
+using RimWorld;
 using SaveOurShip2;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
 using Verse;
 
 namespace TheCafFiend
@@ -14,13 +18,68 @@ namespace TheCafFiend
             // add any other startup shenanigins
         }
     }
-
     public class SOS2ExpSpinal_HarmonyPatch
     {
+        public System.Type pointerToDrawGhost;
         public static void DoPatching()
         {
             var harmony = new Harmony("TheCafFiend.SOS2ExpSpinal"); 
             harmony.PatchAll();
+        }
+    }
+    [HarmonyPatch(typeof(SaveOurShip2.SpaceShipCache), nameof(SaveOurShip2.SpaceShipCache.FuelNeeded), MethodType.Normal)]
+    public class PatchFuelNeeded
+    {
+        public static void Postfix(ref List<CompEngineTrail> ___Engines, ref float __result) // foglayer bullshit on land?!
+        {
+            foreach (CompSpinalEngineTrail iterateEngine in  ___Engines.OfType<CompSpinalEngineTrail>()) 
+            {
+                //Log.Message($"Find spinalenginetrail and check is {iterateEngine.cachedBuildingTypes.Count(stringEvaluate => stringEvaluate == "engineGravitationalCompensator")}");
+                if (iterateEngine.cachedBuildingTypes.Count(stringEvaluate => stringEvaluate == "engineGravitationalCompensator") != 2)
+                {
+                    return;
+                }
+                __result += iterateEngine.refuelComp.Fuel;
+                if (iterateEngine.refuelComp.Props.fuelFilter.AllowedThingDefs.Contains(ResourceBank.ThingDefOf.ShuttleFuelPods))
+                {
+                    __result += iterateEngine.refuelComp.Fuel;
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch]
+    public class PatchSpinalEngineGhost //If PlaceWorker_ShipEngine was public I think I could extend this instead but, for now, here we are. 
+    {
+        static MethodBase TargetMethod() => AccessTools.Method("SaveOurShip2.PlaceWorker_ShipEngine:DrawGhost");
+        public static bool Prefix(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
+        {   // There is probably a better way? TODO
+            if (def.defName != "Ship_Engine_Spinal_Chem" && def.defName != "Ship_Engine_Spinal_Nuke")
+            {
+                return true; 
+            }
+            List<IntVec3> rect = GenAdj.CellsOccupiedBy(center, rot, def.size).ToList();
+            int minx = 99999;
+            int minz = 99999;
+            foreach (IntVec3 vec in rect)
+            {
+                if (vec.x < minx)
+                    minx = vec.x;
+                if (vec.z < minz)
+                    minz = vec.z;
+            }
+            CellRect engineDestroyRect;
+            engineDestroyRect = new CellRect(minx, minz, rot.IsHorizontal ? def.size.z : def.size.x, rot.IsHorizontal ? def.size.x : def.size.z).MovedBy(CompSpinalEngineTrail.killOffsetSpinal[rot.AsInt]).ExpandedBy(2);
+            if (rot.IsHorizontal)
+            {
+                engineDestroyRect.Width = engineDestroyRect.Width * 2 - 3;
+            }
+            else
+            {
+                engineDestroyRect.Height = engineDestroyRect.Height * 2 - 3;
+            }
+            GenDraw.DrawFieldEdges(engineDestroyRect.Cells.ToList(), Color.red);
+            return false; //bails on original drawghost! Some danger
         }
     }
 
@@ -30,7 +89,7 @@ namespace TheCafFiend
         public static bool Prefix(Building b, ref int ___EngineMass, ref float ___ThrustRaw, HashSet<Building> ___Buildings, ref List<CompEngineTrail> ___Engines) //prefix due to DoSpawn running addcache on every single cell :/
         {
             Building argBuilding = b; 
-            Log.Message($"SOS2 Spinal Engines: name of added is: {argBuilding.def.defName}");
+            //Log.Message($"SOS2 Spinal Engines: name of added is: {argBuilding.def.defName}");
             if (___Buildings.Contains(argBuilding))
             {
                 return true; //building is already in cache, presumably re-running on other cells
@@ -40,7 +99,7 @@ namespace TheCafFiend
                 //Log.Message("SOS2ExpSpinalEngines SpinalComp null");
                 return true; //Not spinal-related, bail ASAP
             }
-            Building foundEngine = CompMultiblock.ControllerFromSubBlock(argBuilding, true);
+            Building foundEngine = CompMultiblock.ControllerFromSubBlock(argBuilding);
             if (foundEngine == null)
             {
                 Log.Message("SOS2 SpinalEngines EngineFromSpinal null");

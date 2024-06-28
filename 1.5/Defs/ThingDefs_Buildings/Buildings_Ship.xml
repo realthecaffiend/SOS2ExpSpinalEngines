@@ -22,7 +22,7 @@
 			<Flammability>0</Flammability>
 		</statBases>
 		<tickerType>Normal</tickerType>
-		<description>A chemfuel-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet.\n\nThrust: 2000+25% per amp\nFuel use: 4 chemfuel+25% per amp, per second</description>
+		<description>A chemfuel-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet without additional gravitational compensators.\n\nThrust: 2000+25% per amp\nFuel use: 4 chemfuel+25% per amp, per second</description>
 		<researchPrerequisites>
 			<li>ShipEngine</li>
 			<li>ShipEngineLarge</li>
@@ -48,7 +48,15 @@
 					<li>
 						<direction>Clockwise</direction>
 						<connectType>
-							<li>engineAccelerator</li>
+							<li>EngineEmergencyOverdrive</li>
+							<li>engineGravitationalCompensator</li>
+						</connectType>
+					</li>
+					<li>
+						<direction>Counterclockwise</direction>
+						<connectType>
+							<li>EngineEmergencyOverdrive</li>
+							<li>engineGravitationalCompensator</li>
 						</connectType>
 					</li>
 				</acceptFrom>
@@ -120,7 +128,7 @@
 			<Flammability>0</Flammability>
 		</statBases>
 		<tickerType>Normal</tickerType>
-		<description>A nuclear-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet.\n\nThrust: 2500+25% per amp\nFuel use: 3 fuel pods+25% per amp, per second</description>
+		<description>A nuclear-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet without additional gravitational compensators.\n\nThrust: 2500+25% per amp\nFuel use: 3 fuel pods+25% per amp, per second</description>
 		<researchPrerequisites>
 			<li>ShipEngine</li>
 			<li>ShipEngineLarger</li>
@@ -138,9 +146,24 @@
 				<multiblockController>true</multiblockController>
 				<acceptFrom>
 					<li>
-						<direction>None</direction> <!--Engines in SOS2 exhaust to the "back"! So connect to the other end-->
+						<direction>None</direction>
+						<!--Engines in SOS2 exhaust to the "back"! So connect to the other end-->
 						<connectType>
 							<li>engineAccelerator</li>
+						</connectType>
+					</li>
+					<li>
+						<direction>Clockwise</direction>
+						<connectType>
+							<li>EngineEmergencyOverdrive</li>
+							<li>engineGravitationalCompensator</li>
+						</connectType>
+					</li>
+					<li>
+						<direction>Counterclockwise</direction>
+						<connectType>
+							<li>EngineEmergencyOverdrive</li>
+							<li>engineGravitationalCompensator</li>
 						</connectType>
 					</li>
 				</acceptFrom>
@@ -192,5 +215,74 @@
 			<ComponentIndustrial>12</ComponentIndustrial>
 			<ComponentSpacer>12</ComponentSpacer>
 		</costList>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipGravitationalCompensator</defName>
+		<label>Gravitational Launch compensator</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>Utilizes gravitational fields to create an artificial microgravity bubble around the engine structure, as well as providing greater control over exact exhaust direction. One on each side of the exhaust allows use in launch from gravity wells. Somewhat increases power use</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_Solenoid_Archo</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(3,4)</drawSize>
+		</graphicData>
+		<size>(3,4)</size>
+		<rotatable>true</rotatable>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.5</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1600</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>100</Steel>
+			<Uranium>10</Uranium>
+			<Plasteel>80</Plasteel>
+			<ComponentSpacer>8</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<powerUseAmp>2.00</powerUseAmp>
+				<multiblockType>engineGravitationalCompensator</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>invalidOnPurposeTypeThatDoesntExist</li>
+						</connectType>
+					</li>
+				</acceptFrom>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<researchPrerequisites>
+			<li>ShipEngineLarger</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.65</uiIconScale>
 	</ThingDef>
 </Defs>

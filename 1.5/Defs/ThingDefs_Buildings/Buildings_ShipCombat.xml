@@ -224,6 +224,80 @@
 		<uiIconScale>0.65</uiIconScale>
 	</ThingDef>
 	<ThingDef ParentName="BuildingBase">
+		<defName>ShipEngineEntangledAmplifier</defName>
+		<label>Entangled Engine Accelerator</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>Utilizes Johnson-Tanaka quantum effects to accelerate fuel before ignition. Attach one or more of these to a fuel support system, then add an exhaust to determine the engine type.\n\nIncreases base thrust by 50%, with no fuel increase.\n\nThese accelerators require no additional fuel support infrastructure at the end of the spinal engine to support them, while requiring signficiant amounts of power to operate, and a manifold to build</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_Solenoid_Archo</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,1)</drawSize>
+		</graphicData>
+		<size>(5,1)</size>
+		<rotatable>true</rotatable>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.5</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1600</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>20</Steel>
+			<Uranium>20</Uranium>
+			<Plasteel>100</Plasteel>
+			<ComponentSpacer>8</ComponentSpacer>
+			<SoSEntanglementManifold>1</SoSEntanglementManifold>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<thrustAmp>0.50</thrustAmp>
+				<fuelUseAmp>0.00</fuelUseAmp>
+				<powerUseAmp>2.00</powerUseAmp>
+				<multiblockType>engineAccelerator</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>engineAccelerator</li>
+							<li>engineTankEnd</li>
+						</connectType>
+					</li>
+				</acceptFrom>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<researchPrerequisites>
+			<li>ShipEngineLarger</li>
+			<li>SoSJTDrive</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.65</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
 		<defName>ShipSpinalTankEnd</defName>
 		<label>Spinal Engine Fuel Support End</label>
 		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
@@ -432,6 +506,74 @@
 			<li>ShipEngineLarge</li>
 		</researchPrerequisites>
 		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.9</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>SpinalEngineEmergencyOverride</defName>
+		<label>Spinal Engine Emergency Injector</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>An experimental high-power injector designed to dramatically increase thrust production for a short time, at the expense of fuel and power. Burns out after use, generally reserved for extreme need</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_Injector</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(1,5)</drawSize>
+		</graphicData>
+		<size>(1,5)</size>
+		<rotatable>true</rotatable>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>true</castEdgeShadows>
+		<fillPercent>1.0</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<canOverlapZones>false</canOverlapZones>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>50</MaxHitPoints>
+			<WorkToBuild>10000</WorkToBuild>
+			<Flammability>0.9</Flammability>
+		</statBases>
+		<costList>
+			<Steel>60</Steel>
+			<Chemfuel>400</Chemfuel>
+			<Plasteel>80</Plasteel>
+			<ComponentSpacer>12</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<multiblockType>EngineEmergencyOverdrive</multiblockType>
+				<acceptFrom>
+					<li>
+						<direction>Opposite</direction>
+						<connectType>
+							<li>invalidNonExistantTypeOnPurpose</li>
+						</connectType>
+					</li>
+				</acceptFrom>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
+		<researchPrerequisites>
+			<li>ShipEngineLarge</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>12</constructionSkillPrerequisite>
 		<uiIconScale>0.9</uiIconScale>
 	</ThingDef>
 	<ThingDef ParentName="MoteBase">

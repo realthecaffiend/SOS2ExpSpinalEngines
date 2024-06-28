@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Verse;
-// Future thoughts: Overdrive mode(s), entangled accelerators, ramjets, antimatter? end, better accelerators (Entangled? Bump exotics?), liftoff (fuel, gimbals?)
+// Future thoughts: ramjets, antimatter? end, better accelerators (Bump exotics?), liftoff (fuel tanks). Update descrip of compensators and overdrives to include location!
 namespace TheCafFiend
 {
     [StaticConstructorOnStartup]
-    public class CompSpinalEngineTrail : CompEngineTrail //TODO: Exhaust destroy area is funneh. Harmony post-fix it?
+    public class CompSpinalEngineTrail : CompEngineTrail
     {
         public override string CompInspectStringExtra()
         {
@@ -17,8 +17,8 @@ namespace TheCafFiend
             if (fullyFormed)
             {
                 stringBuilder.Append("SoS.SpinalEngines.FuelRate".Translate(cachedFuelUse, cachedFuelAllowed)); // "Fuel burn rate per second: {cachedFuelUse} of {cachedFuelAllowed} supported"
-                stringBuilder.AppendInNewLine("SoS.SpinalEngines.Thrust".Translate(cachedThrust * 500)); // "Thrust: {cachedThrust * 500}"
-                stringBuilder.AppendWithSeparator("SoS.SpinalEngines.SupportMass".Translate(cachedMass)," ");
+                stringBuilder.AppendInNewLine("SoS.SpinalEngines.Thrust".Translate(Thrust * 500)); // "Thrust: {cachedThrust * 500}"
+                stringBuilder.AppendWithSeparator("SoS.SpinalEngines.SupportMass".Translate(cachedMass * 60)," ");
             }
             else
             {
@@ -29,6 +29,139 @@ namespace TheCafFiend
         public virtual CompProperties_SpinalEngineTrail Properties
         {
             get { return props as CompProperties_SpinalEngineTrail; }
+        }
+        private bool overdriveSetting = false;
+        private int overdriveStartTick = 0;
+        private bool testBurnSetting = false;
+        private int testBurnStartTick = 0;
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        {
+            foreach (Gizmo item in base.CompGetGizmosExtra())
+            {
+                yield return item;
+            }
+            if (parent.Faction != Faction.OfPlayer)
+            {
+                yield break;
+            }
+            Command_Toggle overdriveCommandToggle = new Command_Toggle();
+            overdriveCommandToggle.defaultLabel = "SoS.SpinalEngines.EngineOverdrive".Translate(parent);
+            overdriveCommandToggle.defaultDesc = "SoS.SpinalEngines.EngineOverdriveDesc".Translate(parent);
+            overdriveCommandToggle.isActive = (() => overdriveSetting == true);
+            overdriveCommandToggle.Disabled = !cachedBuildingTypes.Contains("EngineEmergencyOverdrive");
+            overdriveCommandToggle.disabledReason = "SoS.SpinalEngines.EngineOverrideDisabled".Translate();
+            overdriveCommandToggle.toggleAction = delegate
+            {
+                FlickOverdrive();
+            };
+            yield return overdriveCommandToggle;
+
+            Command_Toggle testBurnCommandToggle = new Command_Toggle();
+            testBurnCommandToggle.defaultLabel = "SoS.SpinalEngines.EngineTestBurn".Translate(parent);
+            testBurnCommandToggle.defaultDesc = "SoS.SpinalEngines.EngineTestBurnDesc".Translate(parent);
+            testBurnCommandToggle.isActive = (() => testBurnSetting == true);
+            if (!this.CanFire() || this.active || this.mapComp.ShipMapState != ShipMapState.nominal)
+            {
+                testBurnCommandToggle.Disabled = true; // engine can't fire, or, already is, or, in combat (or other oddities)
+            }
+            testBurnCommandToggle.disabledReason = "SoS.SpinalEngines.EngineTestBurnDisabled".Translate();
+            testBurnCommandToggle.toggleAction = delegate
+            {
+                FlickTestBurn();
+            };
+            yield return testBurnCommandToggle;
+        }
+
+        public void FlickOverdrive()
+        {
+            SpaceShipCache shipAttached = parent.Map.GetComponent<ShipMapComp>().ShipsOnMap[parent.Map.GetComponent<ShipMapComp>().ShipIndexOnVec(parent.Position)];
+            if (overdriveSetting == true)
+            {
+                overdriveSetting = false;
+                shipAttached.ThrustRaw -= cachedThrust *2;
+                shipAttached.ThrustRaw += cachedThrust; // I don't love this but if I don't update ThrustRaw, the player ship info/debug hover are wrong
+            }
+            else 
+            {
+                Building injectorToDestroy = new Building();
+                List<Building> replacementWrecks = new List<Building>();
+                foreach (Building iterateBuilding in cachedBuildings)
+                {
+                    CompSpinalEngineMount iterateComp = iterateBuilding.TryGetComp<CompSpinalEngineMount>();
+                    if (iterateComp == null)
+                    {
+                        continue;
+                    }
+                    if (iterateComp.Props.multiblockType != "EngineEmergencyOverdrive")
+                    {
+                        continue;
+                    }
+                    // found an injector 
+                    injectorToDestroy = iterateBuilding;
+                    foreach (IntVec3 iteratePosition in iterateBuilding.OccupiedRect())
+                    {
+                        Building replacementBlock = (Building)ThingMaker.MakeThing(ThingDef.Named("Ship_Beam_Wrecked"));
+                        replacementBlock.Position = iteratePosition;
+                        replacementBlock.SetFaction(Faction.OfPlayer);
+                        replacementWrecks.Add(replacementBlock); 
+                    }
+                    break; // Only smash a single injector
+                }
+                injectorToDestroy.Destroy();
+                foreach (Building iterateWreck in replacementWrecks)
+                {
+                    iterateWreck.SpawnSetup(parent.Map, false);
+                    FleckMaker.ThrowSmoke(iterateWreck.DrawPos, parent.Map, 1);
+                }
+                overdriveStartTick = Find.TickManager.TicksGame;
+                shipAttached.ThrustRaw -= cachedThrust;
+                shipAttached.ThrustRaw += cachedThrust * 2;
+                overdriveSetting = true;
+            }
+        }
+        public void FlickTestBurn()
+        {
+            if (testBurnSetting)
+            {
+                testBurnSetting = false;
+                this.Off();
+            }
+            else
+            {
+                testBurnStartTick = Find.TickManager.TicksGame;
+                this.On();
+                testBurnSetting = true;
+            }
+        }
+        public override void CompTick()
+        {
+            base.CompTick();
+            if (Find.TickManager.TicksGame  % 600 != 0)
+            {
+                return;
+            }
+            if (overdriveSetting != true && testBurnSetting != true)
+            {
+                return;
+            }
+            else
+            {
+                if (Find.TickManager.TicksGame >= (overdriveStartTick + 3600) && overdriveStartTick != 0) //60s, but modulo only runs every ~10, might get a little extra shhhhh
+                {
+                    //Log.Message($"sos2 spinal engines gametick less than 3600+ overdrivestarttick is {overdriveStartTick + 3600} gametick is {Find.TickManager.TicksGame}");
+                    overdriveSetting = false;
+                }
+                else if (Find.TickManager.TicksGame >= (testBurnStartTick + 600) && testBurnStartTick != 0)
+                {
+                    testBurnSetting = false;
+                    this.Off();
+                }
+                else
+                {
+                    return;
+                }
+            }
+
         }
         public class SpinalEngineState : MultiblockState
         {
@@ -46,6 +179,7 @@ namespace TheCafFiend
         private int cachedFuelAllowed = 0; // Error below probably never surfaces to a player but I want a fallback
         private string cachedError = "SoS.SpinalEngines.DefaultError".Translate();
         public HashSet<Building> cachedBuildings = new HashSet<Building>(); //getter setter nonsense instead? 
+        public List<string> cachedBuildingTypes = new List<string>();
         public override int Thrust
         {
             get
@@ -59,8 +193,16 @@ namespace TheCafFiend
                 {
                     //Log.Message($"sos2 spinal engines thrust called about a spinal engine, returning cached thrust {thrustCached}");
                     Calc();
-                }  
-                return cachedThrust;
+                }
+                if (overdriveSetting)
+                {
+                    //Log.Message($"sos2 spinal engines thrust called about a spinal engine while overdriving, returning cached thrust {cachedThrust * 3} overdrivestarttick is {overdriveStartTick} gametick is {Find.TickManager.TicksGame}");
+                    return cachedThrust * 2;
+                }
+                else
+                {
+                    return cachedThrust;
+                } 
             }
         }
         public bool SetError(string passedError) // trivial atm but stubbed for any later handling: Consolidate translation?
@@ -86,7 +228,15 @@ namespace TheCafFiend
                 }
                 if (fullyFormed)
                 {
-                    return -cachedPowerUse; 
+                    if (overdriveSetting)
+                    {
+                        return cachedPowerUse * 10;
+                    }
+                    else
+                    {
+                        return -cachedPowerUse;
+                    }
+                    
                 }
                 else
                 {
@@ -107,6 +257,10 @@ namespace TheCafFiend
                 {
                     //Log.Message($"sos2 spinal engines thrust called about a spinal engine, returning cached fuelUse {cachedFuelUse}");
                     Calc();
+                }
+                if (overdriveSetting)
+                { 
+                    return cachedFuelUse * 10; 
                 }
                 return cachedFuelUse;
             }
@@ -166,6 +320,31 @@ namespace TheCafFiend
                 fullyFormed = true;
             }
         }
+        public static IntVec2[] killOffsetSpinal = { new IntVec2(0, -11), new IntVec2(-11, 0), new IntVec2(0, 6), new IntVec2(6, 0) };
+        public override void PostSpawnSetup(bool respawningAfterLoad) // fixes offset of plume area
+        {
+            base.PostSpawnSetup(respawningAfterLoad); //regular SOS2 postSpawn
+            CompSpinalEngineTrail engineCompToSetup = parent.TryGetComp<CompSpinalEngineTrail>();
+            if (engineCompToSetup == null) 
+            {
+                return; //Not a spinal engine
+            }
+            ExhaustArea.Clear();
+            CellRect engineDestroyRect;
+            engineDestroyRect = parent.OccupiedRect().MovedBy(killOffsetSpinal[parent.Rotation.AsInt]).ExpandedBy(2);
+            if (parent.Rotation.IsHorizontal)
+            {
+                engineDestroyRect.Width = engineDestroyRect.Width * 2 - 3;
+            }
+            else
+            {
+                engineDestroyRect.Height = engineDestroyRect.Height * 2 - 3;
+            }
+            foreach (IntVec3 v in engineDestroyRect.Where(v => v.InBounds(parent.Map)))
+            {
+                ExhaustArea.Add(v);
+            }
+        }
         //cannot be added till SOS2 updates to flag virtual
         public override bool CanFire(Rot4 rot) // fixes a visual glitch where engines in some cases can visually "fire" 
         {
@@ -204,10 +383,10 @@ namespace TheCafFiend
             List<Building> blockList = new List<Building>();
             foreach (MultiblockConnections connectObject in spinalComp.Props.acceptFrom)
             {
-                returnHandler = CompMultiblock.RecursiveFind(ref blockList, buildingPointer, connectObject, true);
+                returnHandler = CompMultiblock.RecursiveFind(ref blockList, buildingPointer, connectObject, false);
                 if (returnHandler == null || returnHandler.recursiveErrorFound)
                 {
-                    break;
+                    continue;
                 }
             }
             if (returnHandler == null)
@@ -267,6 +446,7 @@ namespace TheCafFiend
                 return returnedSpinalEngineState;
             }
             // Found an entire multiblock
+            argEngineTrail.cachedBuildingTypes = foundTypes;
             returnedSpinalEngineState.fullyFormed = true;
             return returnedSpinalEngineState;
         }

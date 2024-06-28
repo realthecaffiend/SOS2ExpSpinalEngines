@@ -2,11 +2,19 @@
 <LanguageData>
   <SoS.SpinalEngines.FuelRate>Fuel burn rate per second: {0} of {1} supported</SoS.SpinalEngines.FuelRate>
   <SoS.SpinalEngines.Thrust>Thrust: {0}</SoS.SpinalEngines.Thrust>
+  <SoS.SpinalEngines.SupportMass>Added fuel support mass: {0}</SoS.SpinalEngines.SupportMass>
+  <SoS.SpinalEngines.EngineOverdrive>Engage emergency overdrive</SoS.SpinalEngines.EngineOverdrive>
+  <SoS.SpinalEngines.EngineOverdriveDesc>Burn out a dedicated emergency drive injector for 60 seconds of incredible thrust</SoS.SpinalEngines.EngineOverdriveDesc>
+  <SoS.SpinalEngines.EngineOverrideDisabled>Overdrive requires an attached emergency overdrive injector</SoS.SpinalEngines.EngineOverrideDisabled>
+  <SoS.SpinalEngines.EngineTestBurn>Engine test</SoS.SpinalEngines.EngineTestBurn>
+  <SoS.SpinalEngines.EngineTestBurnDesc>Perform a brief (around ten seconds) engine firing test</SoS.SpinalEngines.EngineTestBurnDesc>
+  <SoS.SpinalEngines.EngineTestBurnDisabled>Engine cannot test right now!</SoS.SpinalEngines.EngineTestBurnDisabled>
   <SoS.SpinalEngines.NoAccelerator>No engine accelerators found attached to engine!</SoS.SpinalEngines.NoAccelerator>
   <SoS.SpinalEngines.NoFuelSupport>No fuel support infrastructure found; Ensure accelerators are connected directly into the fuel support end!</SoS.SpinalEngines.NoFuelSupport>
   <SoS.SpinalEngines.NoFuelSupportEnd>Fuel infrastructure found, but not a complete set: Is the end missing?</SoS.SpinalEngines.NoFuelSupportEnd>
   <SoS.SpinalEngines.InSufficientFuelSupport>Insufficent fuel structures to support accelerators: Requires {0} fuel/second, can supply {1} per second</SoS.SpinalEngines.InSufficientFuelSupport>
   <SoS.SpinalEngines.DefaultError>Spinal engine isn't fully formed! Check for engine accelerators, and all three components of the fuel infrastructure!</SoS.SpinalEngines.DefaultError>
-  <SoS.SpinalEngines.BackwardsSpinal>Backwards spinal component found!</SoS.SpinalEngines.BackwardsSpinal>
+  <SoS.SpinalEngines.MissaligedMultiblock>Misaligned engine component {0} at {1}</SoS.SpinalEngines.MissaligedMultiblock>
+  <SoS.SpinalEngines.BackwardsSpinal>Backwards spinal component found: {0} at {1}!</SoS.SpinalEngines.BackwardsSpinal>
   <SoS.SpinalEngines.ComponentRemoved>A supporting {0} of the spinal engine was removed! </SoS.SpinalEngines.ComponentRemoved>
 </LanguageData>
