@@ -11,7 +11,7 @@ namespace TheCafFiend
         static SOS2SpinalEngines()
         {
             SOS2ExpSpinal_HarmonyPatch.DoPatching();
-            // add any other startup shenanigins
+            // add any other startup shenanigans
         }
     }
 

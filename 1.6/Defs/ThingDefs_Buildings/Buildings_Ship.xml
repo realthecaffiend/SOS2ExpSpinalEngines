@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Defs>
+	<DesignatorDropdownGroupDef>
+		<defName>ShipEngines_Spinal</defName>
+	</DesignatorDropdownGroupDef>
+	<ThingDef ParentName="BuildingShipBase">
+		<defName>Ship_Engine_Spinal_Chem</defName>
+		<label>Spinal Chemfuel Exhaust</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<thingClass>Building</thingClass>
+		<drawerType>MapMeshAndRealTime</drawerType>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_ExhaustBell</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,5)</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToBuild>80000</WorkToBuild>
+			<MaxHitPoints>1500</MaxHitPoints>
+			<Flammability>0</Flammability>
+		</statBases>
+		<tickerType>Normal</tickerType>
+		<description>A chemfuel-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet.\n\nThrust: 2000+25% per amp\nFuel use: 4 chemfuel+25% per amp, per second</description>
+		<researchPrerequisites>
+			<li>ShipEngine</li>
+			<li>ShipEngineLarge</li>
+		</researchPrerequisites>
+		<size>(5,4)</size>
+		<receivesSignals>true</receivesSignals>
+		<designationCategory>Ship</designationCategory>
+		<comps>
+			<li Class="SaveOurShip2.CompProps_ShipCachePart">
+				<hermetic>true</hermetic>
+			</li>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>false</emits>
+				<receives>true</receives>
+				<color>(1.0,0.8,0)</color>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>TheCafFiend.CompSpinalEnginePowerTrader</compClass>
+				<basePowerConsumption>100</basePowerConsumption>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="CompProperties_Flickable"/>
+			<li Class="CompProperties_Refuelable">
+				<fuelCapacity>2000.0</fuelCapacity>
+				<targetFuelLevelConfigurable>true</targetFuelLevelConfigurable>
+				<fuelFilter>
+					<thingDefs>
+						<li>Chemfuel</li>
+					</thingDefs>
+				</fuelFilter>
+				<consumeFuelOnlyWhenUsed>true</consumeFuelOnlyWhenUsed>
+				<autoRefuelPercent>0.9</autoRefuelPercent>
+				<showFuelGizmo>false</showFuelGizmo>
+				<drawOutOfFuelOverlay>false</drawOutOfFuelOverlay>
+				<drawFuelGaugeInMap>false</drawFuelGaugeInMap>
+				<showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+			</li>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineTrail">
+				<!--graphicData>
+					<texPath>Things/Building/Ship/NuclearEngineTrail</texPath>
+					<graphicClass>Graphic_Multi</graphicClass>
+					<drawSize>(7,36.5)</drawSize>
+				</graphicData-->
+				<thrust>4</thrust>
+				<fuelUse>4</fuelUse>
+				<takeOff>false</takeOff>
+				<fuelAllowed>4</fuelAllowed>
+				<soundWorking>ShipEngineFuel</soundWorking>
+			</li>
+			<li>
+				<compClass>CompColorable</compClass>
+			</li>
+			<!-- not used but avoids a minor error from SOS2 -->
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_ShipEngine</li>
+		</placeWorkers>
+		<building>
+			<shipPart>true</shipPart>
+		</building>
+		<costList>
+			<Steel>400</Steel>
+			<Plasteel>80</Plasteel>
+			<ComponentIndustrial>6</ComponentIndustrial>
+			<ComponentSpacer>6</ComponentSpacer>
+		</costList>
+	</ThingDef>
+	<ThingDef ParentName="BuildingShipBase">
+		<defName>Ship_Engine_Spinal_Nuke</defName>
+		<label>Spinal Nuclear Exhaust</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<thingClass>Building</thingClass>
+		<drawerType>MapMeshAndRealTime</drawerType>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_ExhaustBell_Nuclear</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,5)</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToBuild>80000</WorkToBuild>
+			<MaxHitPoints>2500</MaxHitPoints>
+			<Flammability>0</Flammability>
+		</statBases>
+		<tickerType>Normal</tickerType>
+		<description>A nuclear-powered spinal engine. Not suitable for interplanetary travel. Designed to operate only in microgravity, so provides no capacity to liftoff from a planet.\n\nThrust: 2500+25% per amp\nFuel use: 3 fuel pods+25% per amp, per second</description>
+		<researchPrerequisites>
+			<li>ShipEngine</li>
+			<li>ShipEngineLarger</li>
+		</researchPrerequisites>
+		<size>(5,4)</size>
+		<receivesSignals>true</receivesSignals>
+		<designationCategory>Ship</designationCategory>
+		<comps>
+			<li Class="SaveOurShip2.CompProps_ShipCachePart">
+				<hermetic>true</hermetic>
+			</li>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>false</emits>
+				<receives>true</receives>
+				<color>(1.0,0.8,0)</color>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>TheCafFiend.CompSpinalEnginePowerTrader</compClass>
+				<basePowerConsumption>200</basePowerConsumption>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="CompProperties_Flickable"/>
+			<li Class="CompProperties_Refuelable">
+				<fuelCapacity>4000.0</fuelCapacity>
+				<targetFuelLevelConfigurable>true</targetFuelLevelConfigurable>
+				<fuelFilter>
+					<thingDefs>
+						<li>ShuttleFuelPods</li>
+					</thingDefs>
+				</fuelFilter>
+				<consumeFuelOnlyWhenUsed>true</consumeFuelOnlyWhenUsed>
+				<autoRefuelPercent>0.9</autoRefuelPercent>
+				<showFuelGizmo>false</showFuelGizmo>
+				<drawOutOfFuelOverlay>false</drawOutOfFuelOverlay>
+				<drawFuelGaugeInMap>false</drawFuelGaugeInMap>
+				<showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+			</li>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineTrail">
+				<!--graphicData>
+					<texPath>Things/Building/Ship/NuclearEngineTrail</texPath>
+					<graphicClass>Graphic_Multi</graphicClass>
+					<drawSize>(7,36.5)</drawSize>
+				</graphicData-->
+				<thrust>5</thrust>
+				<fuelUse>3</fuelUse>
+				<takeOff>false</takeOff>
+				<fuelAllowed>3</fuelAllowed>
+				<soundWorking>ShipEngineFuel</soundWorking>
+			</li>
+			<li>
+				<compClass>CompColorable</compClass>
+			</li> <!-- not used but avoids a minor error from SOS2 -->
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_ShipEngine</li>
+		</placeWorkers>
+		<building>
+			<shipPart>true</shipPart>
+		</building>
+		<costList>
+			<Steel>400</Steel>
+			<Plasteel>80</Plasteel>
+			<ComponentIndustrial>12</ComponentIndustrial>
+			<ComponentSpacer>12</ComponentSpacer>
+		</costList>
+	</ThingDef>
+</Defs>

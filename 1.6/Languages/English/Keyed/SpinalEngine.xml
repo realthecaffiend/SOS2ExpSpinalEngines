@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <SoS.SpinalEngines.FuelRate>Fuel burn rate per second: {0} of {1} supported</SoS.SpinalEngines.FuelRate>
+  <SoS.SpinalEngines.Thrust>Thrust: {0}</SoS.SpinalEngines.Thrust>
+  <SoS.SpinalEngines.NoAccelerator>No engine accelerators found attached to engine!</SoS.SpinalEngines.NoAccelerator>
+  <SoS.SpinalEngines.NoFuelSupport>No fuel support infrastructure found; Ensure accelerators are connected directly into the fuel support end!</SoS.SpinalEngines.NoFuelSupport>
+  <SoS.SpinalEngines.NoFuelSupportEnd>Fuel infrastructure found, but not a complete set: Is the end missing?</SoS.SpinalEngines.NoFuelSupportEnd>
+  <SoS.SpinalEngines.InSufficientFuelSupport>Insufficent fuel structures to support accelerators: Requires {0} fuel/second, can supply {1} per second</SoS.SpinalEngines.InSufficientFuelSupport>
+  <SoS.SpinalEngines.DefaultError>Spinal engine isn't fully formed! Check for engine accelerators, and all three components of the fuel infrastructure!</SoS.SpinalEngines.DefaultError>
+  <SoS.SpinalEngines.BackwardsSpinal>Backwards spinal component found!</SoS.SpinalEngines.BackwardsSpinal>
+  <SoS.SpinalEngines.ComponentRemoved>A supporting {0} of the spinal engine was removed! </SoS.SpinalEngines.ComponentRemoved>
+</LanguageData>

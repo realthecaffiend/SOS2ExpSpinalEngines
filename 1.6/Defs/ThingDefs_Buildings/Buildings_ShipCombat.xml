@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Defs>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipEngineAmplifier</defName>
+		<label>Engine Accelerator</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>Accelerates fuel before ignition. Attach one or more of these to a fuel support system, then add an exhaust to determine the engine type.\n\nIncreases base thrust by 25%, but also increases fuel consumption by the same percentage.\n\nMore accelerators will require more (heavy) fuel support infrastructure at the end of the spinal engine to support them, and each slightly increases power used</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_Solenoid</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,1)</drawSize>
+		</graphicData>
+		<size>(5,1)</size>
+		<rotatable>true</rotatable>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.5</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1600</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>60</Steel>
+			<Uranium>20</Uranium>
+			<Plasteel>80</Plasteel>
+			<ComponentSpacer>3</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<receives>true</receives>
+				<thrustAmp>0.25</thrustAmp>
+				<fuelUseAmp>0.25</fuelUseAmp>
+				<powerUseAmp>0.01</powerUseAmp>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<researchPrerequisites>
+			<li>ShipEngineLarge</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.65</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipEnginePoweredAmplifier</defName>
+		<label>High-power Engine Accelerator</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>Consumes significant power in order to accelerate fuel before ignition. Attach one or more of these to a fuel support system, then add an exhaust to determine the engine type.\n\nIncreases base thrust by 25%, but also increases fuel consumption by 5%.\n\nMore accelerators will require more (heavy) fuel support infrastructure at the end of the spinal engine to support them: These high-powered versions need less fuel support but significantly more power used</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_Solenoid_HighPower</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,1)</drawSize>
+		</graphicData>
+		<size>(5,1)</size>
+		<rotatable>true</rotatable>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.5</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1600</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>20</Steel>
+			<Uranium>40</Uranium>
+			<Plasteel>100</Plasteel>
+			<ComponentSpacer>6</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Glower">
+				<glowRadius>6</glowRadius>
+				<glowColor>(30,30,300,0)</glowColor>
+				<colorPickerEnabled>true</colorPickerEnabled>
+			</li>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<receives>true</receives>
+				<thrustAmp>0.25</thrustAmp>
+				<fuelUseAmp>0.05</fuelUseAmp>
+				<powerUseAmp>5.00</powerUseAmp> <!-- not a typo-->
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<researchPrerequisites>
+			<li>ShipEngineLarger</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.65</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipEngineExoticAmplifier</defName>
+		<label>Exotic Engine Accelerator</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>Utilizes exotic fields to accelerate fuel before ignition. Attach one or more of these to a fuel support system, then add an exhaust to determine the engine type.\n\nIncreases base thrust by 25%, but also increases fuel consumption by 1%.\n\nThese accelerators require very minimal fuel support infrastructure at the end of the spinal engine to support them, while requiring truly incredible amounts of power to operate</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_Solenoid_Archo</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,1)</drawSize>
+		</graphicData>
+		<size>(5,1)</size>
+		<rotatable>true</rotatable>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.5</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1600</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>20</Steel>
+			<Uranium>40</Uranium>
+			<Plasteel>100</Plasteel>
+			<ComponentSpacer>6</ComponentSpacer>
+			<ArchotechExoticParticles>2</ArchotechExoticParticles>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<receives>true</receives>
+				<thrustAmp>0.25</thrustAmp>
+				<fuelUseAmp>0.01</fuelUseAmp>
+				<powerUseAmp>6.00</powerUseAmp> <!-- not a typo-->
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<researchPrerequisites>
+			<li>ArchotechSpinalEngine</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.65</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipSpinalTankEnd</defName>
+		<label>Spinal Engine Fuel Support End</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>The last segment of a spinal engine fuel support system. Connect this to one or more engine accelerators, then an exhaust to decide the engine type</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_FuelTankEnd</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,2)</drawSize>
+		</graphicData>
+		<size>(5,2)</size>
+		<rotatable>true</rotatable>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>1.0</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<canOverlapZones>false</canOverlapZones>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>200</MaxHitPoints>
+			<WorkToBuild>3000</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>240</Steel>
+			<Uranium>80</Uranium>
+			<Plasteel>240</Plasteel>
+			<ComponentSpacer>4</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<supportWeight>10</supportWeight>
+				<stackEnd>true</stackEnd>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
+		<researchPrerequisites>
+			<li>ShipEngineLarge</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.9</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipSpinalTankMid</defName>
+		<label>Spinal Engine Fuel Support Middle</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>Each of these segments of fuel infrastructure will support 3 engine accelerators (or, fifteen high-powered accelerators).\n\nConnect these from the fuel support start structure, to the fuel support end, which will then connect to engine accelerators</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_FuelTankMiddle</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,1)</drawSize>
+		</graphicData>
+		<size>(5,1)</size>
+		<rotatable>true</rotatable>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>1.0</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<canOverlapZones>false</canOverlapZones>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>200</MaxHitPoints>
+			<WorkToBuild>3000</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>60</Steel>
+			<Uranium>10</Uranium>
+			<Plasteel>80</Plasteel>
+			<ComponentSpacer>3</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<supportWeight>5</supportWeight>
+				<fuelAllowAmp>0.75</fuelAllowAmp>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>TheCafFiend.PlaceWorker_NeedsSpinalEngineMount</li>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
+		<researchPrerequisites>
+			<li>ShipEngineLarge</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.9</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="BuildingBase">
+		<defName>ShipSpinalTankStart</defName>
+		<label>Spinal Engine Fuel Support Start</label>
+		<designatorDropdown>ShipEngines_Spinal</designatorDropdown>
+		<description>The very first part of a spinal engine. Connect this to one or more fuel engine support middle segments, then to the fuel support end</description>
+		<graphicData>
+			<texPath>Things/Building/Ship/SpinalEngine_FuelTankStart</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(5,1)</drawSize>
+		</graphicData>
+		<size>(5,1)</size>
+		<rotatable>true</rotatable>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<castEdgeShadows>true</castEdgeShadows>
+		<fillPercent>1.0</fillPercent>
+		<designationCategory>Ship</designationCategory>
+		<canOverlapZones>false</canOverlapZones>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<statBases>
+			<MaxHitPoints>200</MaxHitPoints>
+			<WorkToBuild>3000</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>60</Steel>
+			<Uranium>20</Uranium>
+			<Plasteel>80</Plasteel>
+			<ComponentSpacer>4</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="TheCafFiend.CompProperties_SpinalEngineMount">
+				<emits>true</emits>
+				<supportWeight>15</supportWeight>
+				<fuelStackEnd>true</fuelStackEnd>
+			</li>
+			<li Class="PipeSystem.CompProperties_RefillWithPipes" MayRequire ="hrg164hjo.vfefuelpipenet.sos2">
+				<pipeNet>SoS2_UraniumPodNet</pipeNet>
+				<thing>ShuttleFuelPods</thing>
+			</li>
+			<li Class="PipeSystem.CompProperties_Resource" MayRequire ="VanillaExpanded.VChemfuelE">
+				<pipeNet>VCHE_ChemfuelNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTransmitter</compClass>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
+		</comps>
+		<placeWorkers>
+			<li>SaveOurShip2.PlaceWorker_SpinalMountPort</li>
+			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
+		</placeWorkers>
+		<drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
+		<researchPrerequisites>
+			<li>ShipEngineLarge</li>
+		</researchPrerequisites>
+		<constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+		<uiIconScale>0.9</uiIconScale>
+	</ThingDef>
+	<ThingDef ParentName="MoteBase">
+		<defName>SOS2SE_Mote_WarpEffect</defName>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<mote>
+			<fadeInTime>0.1</fadeInTime>
+			<solidTime>0.62</solidTime>
+			<fadeOutTime>0.5</fadeOutTime>
+		</mote>
+		<graphicData>
+			<graphicClass>Graphic_MoteWithAgeSecs</graphicClass>
+			<texPath>Things/Mote/PsychicConditionCauserMask</texPath>
+			<shaderType>MotePsychicConditionCauser</shaderType>
+			<shaderParameters>
+				<_distortionIntensity>0.015</_distortionIntensity>
+				<_brightnessMultiplier>1.1</_brightnessMultiplier>
+				<_distortionScale>40</_distortionScale>
+			</shaderParameters>
+			<drawSize>30</drawSize>
+		</graphicData>
+	</ThingDef>
+</Defs>

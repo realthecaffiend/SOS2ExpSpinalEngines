@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Defs>
+	<ResearchProjectDef ParentName="ShipResearchProjectBase">
+		<defName>ShipEngineLarge</defName>
+		<label>Capital Ship Engines</label>
+		<description>Construct modular spinal-mount engines, typically seen only on very large capital ships.</description>
+		<baseCost>8000</baseCost>
+		<techLevel>Spacer</techLevel>
+		<prerequisites>
+			<li>ShipTurretLarge</li>
+		</prerequisites>
+		<tab>ResearchTabShip</tab>
+		<researchViewX>4</researchViewX>
+		<researchViewY>4.25</researchViewY>
+	</ResearchProjectDef>
+	<ResearchProjectDef ParentName="ShipResearchProjectBase">
+		<defName>ShipEngineLarger</defName>
+		<label>Enhanced Capital Ship Engines</label>
+		<description>Construct more powerful modules for spinal-mount engines, approaching the limits of human ingenuity.</description>
+		<baseCost>8000</baseCost>
+		<techLevel>Spacer</techLevel>
+		<prerequisites>
+			<li>ShipEngineLarge</li>
+		</prerequisites>
+		<tab>ResearchTabShip</tab>
+		<researchViewX>5</researchViewX>
+		<researchViewY>4.25</researchViewY>
+	</ResearchProjectDef>
+	<ResearchProjectDef ParentName="ArchotechResearchProjectBase">
+		<defName>ArchotechSpinalEngine</defName>
+		<label>Exotic Acceleration</label>
+		<description>Utilize exotic particles to craft acceleration beyond the ken of humans.</description>
+		<baseCost>6000</baseCost>
+		<prerequisites>
+			<li>ArchotechEngine</li>
+		</prerequisites>
+		<researchViewX>4</researchViewX>
+		<researchViewY>7</researchViewY>
+	</ResearchProjectDef>
+</Defs>
