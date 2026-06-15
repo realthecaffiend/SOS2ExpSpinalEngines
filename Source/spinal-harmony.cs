@@ -124,4 +124,38 @@ namespace TheCafFiend
             }
         }
     }
+
+    // On()/Off() aren't virtual on CompEngineTrail, and fuel-type engines (us) never get their power touched by them.
+    // These postfixes restore the vanilla "energy engine" behaviour: full draw only while firing, base draw while idle.
+    [HarmonyPatch(typeof(CompEngineTrail), nameof(CompEngineTrail.On))]
+    public class PatchSpinalEnginePowerOn
+    {
+        public static void Postfix(CompEngineTrail __instance)
+        {
+            if (__instance is CompSpinalEngineTrail spinal && spinal.fullyFormed)
+            {
+                CompSpinalEnginePowerTrader powerComp = spinal.parent.TryGetComp<CompSpinalEnginePowerTrader>();
+                if (powerComp != null)
+                {
+                    powerComp.PowerOutput = spinal.PowerUse; // full draw: accelerators energised
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(CompEngineTrail), nameof(CompEngineTrail.Off))]
+    public class PatchSpinalEnginePowerOff
+    {
+        public static void Postfix(CompEngineTrail __instance)
+        {
+            if (__instance is CompSpinalEngineTrail spinal && spinal.fullyFormed)
+            {
+                CompSpinalEnginePowerTrader powerComp = spinal.parent.TryGetComp<CompSpinalEnginePowerTrader>();
+                if (powerComp != null)
+                {
+                    powerComp.PowerOutput = spinal.IdlePowerUse; // idle draw: base engine only
+                }
+            }
+        }
+    }
 }

@@ -16,6 +16,7 @@ namespace TheCafFiend
             {
                 stringBuilder.Append("SoS.SpinalEngines.FuelRate".Translate(cachedFuelUse, cachedFuelAllowed)); // "Fuel burn rate per second: {cachedFuelUse} of {cachedFuelAllowed} supported"
                 stringBuilder.AppendInNewLine("SoS.SpinalEngines.Thrust".Translate(cachedThrust * 500)); // "Thrust: {cachedThrust * 500}"
+                stringBuilder.AppendInNewLine("SoS.SpinalEngines.Power".Translate(cachedPowerUse, cachedIdlePowerUse)); // "Power use: {firing} W firing / {idle} W idle"
             }
             else
             {
@@ -41,7 +42,8 @@ namespace TheCafFiend
         private int cachedMass = 0; // add/remove on the *engine* does this itself, this is only amps+caps
         public bool fullyFormed = false;
         private int cachedFuelUse = 0;
-        private int cachedPowerUse = 0;
+        private int cachedPowerUse = 0; // full draw, only while actually firing/thrusting
+        private int cachedIdlePowerUse = 0; // standby draw: base engine only, accelerators de-energized
         private int cachedFuelAllowed = 0; // Error below probably never surfaces to a player but I want a fallback
         private string cachedError = "SoS.SpinalEngines.DefaultError".Translate();
         public override int Thrust
@@ -84,11 +86,25 @@ namespace TheCafFiend
                 }
                 if (fullyFormed)
                 {
-                    return -cachedPowerUse; 
+                    return -cachedPowerUse;
                 }
                 else
                 {
                     return (int)(parent.TryGetComp<CompPowerTrader>().Props.PowerConsumption);
+                }
+            }
+        }
+        public int IdlePowerUse // standby draw used when the engine isn't firing: base engine only
+        {
+            get
+            {
+                if (fullyFormed)
+                {
+                    return -cachedIdlePowerUse;
+                }
+                else
+                {
+                    return -(int)(parent.TryGetComp<CompPowerTrader>().Props.PowerConsumption);
                 }
             }
         }
@@ -143,6 +159,7 @@ namespace TheCafFiend
             cachedFuelUse = 0;
             cachedFuelAllowed = 0;
             cachedPowerUse = 0;
+            cachedIdlePowerUse = 0;
             cachedError = "SoS.SpinalEngines.DefaultError".Translate();
         }
         private void calc()
@@ -164,8 +181,9 @@ namespace TheCafFiend
                 cachedFuelUse = (int)(base.Props.fuelUse * (1 + wasReturned.fuelAmp));
                 CompSpinalEnginePowerTrader powerComp = parent.TryGetComp<CompSpinalEnginePowerTrader>(); // removing this makes the game NRE?
                 cachedPowerUse = (int)(powerComp.Props.PowerConsumption * (1 + wasReturned.powerUseAmp));// Ok I guess I keep powerComp?!
+                cachedIdlePowerUse = (int)(powerComp.Props.PowerConsumption); // accelerators only draw while accelerating fuel; idle = base engine only
                 //Log.Message($"sos2spinal engines base.powercomp.poweroutput from calc returned poweruse is {wasReturned.powerUseAmp} cached is {cachedPowerUse}");
-                powerComp.PowerOutput = 0 - cachedPowerUse; 
+                powerComp.PowerOutput = 0 - cachedIdlePowerUse; // default to idle; On()/Off() flip to full draw while firing
                 //Log.Message($"sos2spinal engines modified comppowertrader PowerOutput on {parent.GetUniqueLoadID()} to {powerComp.PowerOutput}");
                 cachedFuelAllowed = (int)(this.Properties.fuelAllowed * (1 + wasReturned.fuelAllowAmp));
                 cachedMass = (int)(wasReturned.supportWeight);

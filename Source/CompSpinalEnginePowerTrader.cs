@@ -19,7 +19,7 @@ namespace TheCafFiend
             {
                 return;
             }
-            this.PowerOutput = engineToModify.PowerUse;
+            this.PowerOutput = engineToModify.IdlePowerUse; // start idle; On()/Off() raise to full draw only while firing
         }
     }
 }
