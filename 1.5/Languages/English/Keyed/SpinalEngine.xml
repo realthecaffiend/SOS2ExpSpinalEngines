@@ -2,6 +2,7 @@
 <LanguageData>
   <SoS.SpinalEngines.FuelRate>Fuel burn rate per second: {0} of {1} supported</SoS.SpinalEngines.FuelRate>
   <SoS.SpinalEngines.Thrust>Thrust: {0}</SoS.SpinalEngines.Thrust>
+  <SoS.SpinalEngines.Power>Power use: {0} W firing / {1} W idle</SoS.SpinalEngines.Power>
   <SoS.SpinalEngines.NoAccelerator>No engine accelerators found attached to engine!</SoS.SpinalEngines.NoAccelerator>
   <SoS.SpinalEngines.NoFuelSupport>No fuel support infrastructure found; Ensure accelerators are connected directly into the fuel support end!</SoS.SpinalEngines.NoFuelSupport>
   <SoS.SpinalEngines.NoFuelSupportEnd>Fuel infrastructure found, but not a complete set: Is the end missing?</SoS.SpinalEngines.NoFuelSupportEnd>
